@@ -11,6 +11,7 @@ class Question_Sample(Document):
     question_content = StringField()
 
 class Question(Document):
+    name_tree  = StringField()
     content = StringField()
     username = StringField()
     answer1 = StringField()
@@ -20,6 +21,7 @@ class Question(Document):
     right_answer = StringField()
 
 class User(Document):
+    name_tree = StringField()
     username = StringField()
     user_password = StringField()
 
@@ -27,6 +29,11 @@ class User(Document):
 class Tree(Document):
     name_tree = StringField()
     password = StringField()
+
+# @app.route('/') #xác định nhóm được đăng nhập
+# def index():
+#     loggedin = session.get('loggedin', False)
+#     return render_template('index.html', loggedin = loggedin)
 
 @app.route('/add_question_sample', methods=['GET', 'POST'])
 def add_question_sample():
@@ -37,7 +44,7 @@ def add_question_sample():
         question_content = form['question_content']
         new_Question_Sample = Question_Sample(question_content= question_content)
         new_Question_Sample.save()
-        return render_template('/add_question_sample.html')
+        return render_template('add_question_sample.html')
 
 @app.route('/create_tree', methods=['GET', 'POST'])
 def create_tree():
@@ -47,21 +54,31 @@ def create_tree():
         form = request.form
         name_tree = form['name_tree']
         password = form['password']
-        new_tree = Tree(name_tree=name_tree, password=password)
-        new_tree.save()
-        return redirect(url_for('create_tree_2'))
+        check_tree = Tree.objects(name_tree = name_tree).first()
+        if check_tree is None:
+            new_tree = Tree(name_tree=name_tree, password=password)
+            new_tree.save()
+            session['created_tree'] = True #lưu session tạo tên cây khi khởi tạo
+            session['created_name_tree'] = name_tree #lưu thông tin của tên cây khi khởi tạo
+            return redirect(url_for('create_tree_2'))
+        else:
+            return "Tên cây đã được sử dụng"
 
 @app.route('/create_tree_2', methods=['GET', 'POST'])
 def create_tree_2():
-    if request.method == "GET" :
-        return render_template('create_tree_2.html')
-    elif request.method == "POST" :
-        form = request.form
-        username = form['username']
-        user_password = form['user_password']
-        new_user = User(username=username, user_password= user_password)
-        new_user.save()
-        return render_template('create_tree_2.html')
+    if session.get('created_tree', False): #kiểm tra xem đã tọa tên cây trước chưa?
+        name_tree = session['created_name_tree']
+        if request.method == "GET" :
+            return render_template('create_tree_2.html')
+        elif request.method == "POST" :
+            form = request.form
+            username = form['username']
+            user_password = form['user_password']
+            new_user = User(name_tree=name_tree, username=username, user_password= user_password)
+            new_user.save()
+            return render_template('create_tree_2.html', name_tree = name_tree)
+    else:
+        return redirect(url_for('create_tree')) #đưa người dùng về tạo tên cây
 
 @app.route('/join', methods = ['GET', 'POST'])
 def join():
@@ -71,90 +88,95 @@ def join():
         form = request.form
         name_tree = form['name_tree']
         password = form['password']
-        print(name_tree)
-        print(password)
         tree = Tree.objects(name_tree = name_tree).first()
         if tree is None:
             return 'Nhóm Không tồn tại'
         elif tree.password != password :
             return "Password sai, nhập lại"
         else:
+            session['loggedin_tree'] = True #xác nhận người dùng đã đăng nhập vào cây
+            session['name_tree'] = name_tree #lưu lại thông tin tên Cây của nhóm
             return redirect(url_for('input_member'))
+
 @app.route('/input_member', methods = ['GET', 'POST'])
 def input_member():
-    if request.method == 'GET':
-        return render_template('join_group_2.html')
-    elif request.method == 'POST':
-        form = request.form
-        username = form['username']
-        user_password = form['user_password']
-        user = User.objects(username = username).first()
-        if user is None:
-            return "username không tồn tại"
-        elif user.user_password != user_password:
-            return "Password sai"
-        else:
-            # session['loggedin'] = True
-            return "Đăng nhập thành công"
+    if session.get('loggedin_tree', False):   #kiểm tra xem người dùng đã đăng nhập vào cây chưa?
+        name_tree = session['name_tree'] #lấy lại thông tin name_tree
+        if request.method == 'GET':
+            return render_template('join_group_2.html', name_tree= name_tree)
+        elif request.method == 'POST':
+            form = request.form
+            username = form['username']
+            user_password = form['user_password']
+            user = User.objects(username = username).first()
+            if user is None:
+                return "username không tồn tại"
+            elif user.user_password != user_password:
+                return "Password sai"
+            else:
+                session['loggedin_user'] = True #xác nhận người dùng đã đăng nhập cả vào cây và vào user
+                session['username'] = username
+                return "Đăng nhập thành công" #cần return đến trang chủ
+    else:
+        return redirect(url_for('join')) #đưa người dùng quay lại đăng nhập vào cây
 
 @app.route('/create_question',methods = ['GET', 'POST'])
 def create_question():
-    question_sample = Question_Sample.objects()
-    question_random = choice(question_sample)
-    if request.method == "GET":
-        return render_template('create_question.html', question_contents= question_random["question_content"])
-    elif request.method == "POST":
-        content = question_random["question_content"]
-        form = request.form
-        username = form['username']
-        answer1 = form['answer1']
-        answer2 = form['answer2']
-        answer3 = form['answer3']
-        answer4 = form['answer4']
-        right_answer = form['right_answer']
-        new_question = Question(content=content, username=username, answer1=answer1, answer2=answer2, answer3=answer3, answer4=answer4, right_answer= right_answer)
-        new_question.save()
-        return "Tạo câu hỏi thành công"
+    if session.get('loggedin_tree', False): #kiểm tra xem người dùng đã đăng nhập vào cây chưa?
+        if session.get('loggedin_user', False):  #kiểm tra xem người dùng đã đăng nhập vào username chưa?
+            name_tree = session['name_tree'] #lấy lại thông tin Cây của nhóm
+            username = session['username'] #Lấy lại thông tin của user
+            question_sample = Question_Sample.objects()
+            question_random = choice(question_sample)
+            if request.method == "GET":
+                return render_template('create_question.html', question_content= question_random["question_content"], name_tree= name_tree, username= username)
+            elif request.method == "POST":
+                form = request.form
+                name_tree = name_tree
+                content = form['content']
+                username = username
+                answer1 = form['answer1']
+                answer2 = form['answer2']
+                answer3 = form['answer3']
+                answer4 = form['answer4']
+                right_answer = form['right_answer']
+                new_question = Question(content=content, name_tree= name_tree, username=username, answer1=answer1, answer2=answer2, answer3=answer3, answer4=answer4, right_answer= right_answer)
+                new_question.save()
+                return "Tạo câu hỏi thành công"
+        else:
+            return redirect(url_for('input_member')) #đưa người dùng quay lại đăng nhập username
+    else:
+        return redirect(url_for('join')) #đưa người dùng quay lại đăng nhập vào cây
 
 @app.route('/show_question', methods = ['GET', 'POST'])
 def show_question():
-    question_show = Question.objects()
-    question_show_random = choice(question_show)
-    if request.method == 'GET':
-        # return question_show_random.content
-        return render_template('show_question.html', answer_shows = question_show_random)
-    elif request.method == 'POST':
-        form = request.form
-        right_answer = form['right_answer']
-        if right_answer == question_show_random.right_answer:
-            return "Đúng, cộng 1 điểm"
+    if session.get('loggedin_tree', False): #kiểm tra xem người dùng đã đăng nhập vào cây chưa?
+        if session.get('loggedin_user', False): #kiểm tra xem người dùng đã đăng nhập vào username chưa?
+            name_tree = session['name_tree'] #lấy lại thông tin Cây của nhóm
+            username = session['username'] #Lấy lại thông tin của user
+            question_show = Question.objects()
+            question_show_random = choice(question_show)
+            if question_show_random.username != username: #đưa ra điều kiện để username của câu hỏi khác với username hiện tại của người dùng thì mới hiện ra
+                if request.method == 'GET':
+                    return render_template('show_question.html',name_tree= name_tree, answer_shows = question_show_random)
+                elif request.method == 'POST':
+                    form = request.form
+                    right_answer = form['right_answer']
+                    if right_answer == question_show_random.right_answer:
+                        return "Đúng, cộng 1 điểm"  #CƠ CHẾ TĂNG ĐIỂM CHO CÂY VÀO ĐÂY!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!!!!!!!!!!!!!!!!!!
+                    else:
+                        return "Chúc bạn may mắn lần sau"
         else:
-            return "Chúc bạn may mắn lần sau"
-
-@app.route('/')
-def index():
-    loggedin = session.get('loggedin', False)
-    return render_template('index.html')
+            return redirect(url_for('input_member')) #đưa người dùng quay lại đăng nhập username
+    else:
+        return redirect(url_for('join')) #đưa người dùng quay lại đăng nhập vào cây
 
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'GET':
-        return render_template('login.html')
-    elif request.method == 'POST':
-        form = request.form
-        username = form['username']
-        password = form['password']
-        user = User.objects(username=username).first()
-        if user is None:
-            return "User không tồn tại"
-        elif user.password != password:
-            return "Sai password"
-        else:
-            session['loggedin'] = True
-            return redirect(url_for('admin'))
-
+@app.route('/logout')
+def logout():
+    session['loggedin_tree'] = False
+    return redirect(url_for('join')) #đưa người dùng quay lại đăng nhập vào cây
 
 if __name__ == '__main__':
   app.run(debug=True)
