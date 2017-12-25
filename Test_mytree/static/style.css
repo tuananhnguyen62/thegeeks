@@ -1,0 +1,71 @@
+.header {
+  background-color: black;
+  height: 80px;
+  width: 100%;
+  text-align: center;
+  color: white;
+  justify-content: center;
+}
+.logo {
+  font-family: 'Lobster', cursive;
+  font-size: 2em;
+}
+
+.container {
+  padding-top: 50px;
+  padding-bottom: 50px
+}
+.my-tree-picture {
+  display: inline-block;
+  padding-bottom: 100px
+}
+.my-tree-picture img {
+  max-width: 600px;
+  max-height: 400px;
+
+}
+.float-right {
+  padding-bottom: 100px;
+  margin-right: 10px;
+  padding-right: 100px
+}
+/* .float-right p {
+  text-align: center;
+  font-size: 200%
+} */
+
+.bg-dark {
+  background-color: black !important;
+}
+.footer {
+  height: 80px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white
+}
+.btn {
+  display: inline-block;
+}
+.button {
+  margin-top: 50px;
+}
+.group_name {
+  font-family: 'Lobster', cursive;
+  font-size: 2em;
+  text-align: center;
+  font-size: 200%
+}
+/* .member {
+  font-family: 'Rubik', sans-serif;
+  font-size: 1em
+} */
+
+.member_list li {
+  font-family: 'Lobster', cursive;
+  font-size: 1.5em
+}
+.btn {
+  font-family: 'Lobster', cursive;
+}
