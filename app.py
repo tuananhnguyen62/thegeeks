@@ -29,11 +29,11 @@ class User(Document):
 class Tree(Document):
     name_tree = StringField()
     password = StringField()
+    point = IntField()
 
-# @app.route('/') #xác định nhóm được đăng nhập
-# def index():
-#     loggedin = session.get('loggedin', False)
-#     return render_template('index.html', loggedin = loggedin)
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/add_question_sample', methods=['GET', 'POST'])
 def add_question_sample():
@@ -56,7 +56,7 @@ def create_tree():
         password = form['password']
         check_tree = Tree.objects(name_tree = name_tree).first()
         if check_tree is None:
-            new_tree = Tree(name_tree=name_tree, password=password)
+            new_tree = Tree(name_tree=name_tree, password=password, point =0)
             new_tree.save()
             session['created_tree'] = True #lưu session tạo tên cây khi khởi tạo
             session['created_name_tree'] = name_tree #lưu thông tin của tên cây khi khởi tạo
@@ -154,29 +154,49 @@ def show_question():
         if session.get('loggedin_user', False): #kiểm tra xem người dùng đã đăng nhập vào username chưa?
             name_tree = session['name_tree'] #lấy lại thông tin Cây của nhóm
             username = session['username'] #Lấy lại thông tin của user
+            # point_trees = Tree.objects(name_tree= name_tree).first() #Lấy điểm số của Cây từ database về
+            # point_tree = point_trees.point
+            # print(point_trees)
             question_show = Question.objects()
             question_show_random = choice(question_show)
             if question_show_random.username != username: #đưa ra điều kiện để username của câu hỏi khác với username hiện tại của người dùng thì mới hiện ra
                 if request.method == 'GET':
-                    return render_template('show_question.html',name_tree= name_tree, answer_shows = question_show_random)
+                    return render_template('show_question.html',username= username ,name_tree= name_tree, answer_shows = question_show_random)
                 elif request.method == 'POST':
                     form = request.form
                     right_answer = form['right_answer']
                     if right_answer == question_show_random.right_answer:
-                        return "Đúng, cộng 1 điểm"  #CƠ CHẾ TĂNG ĐIỂM CHO CÂY VÀO ĐÂY!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!!!!!!!!!!!!!!!!!!
+                        return "Đúng, cộng 1 điểm. Bạn đã hết lượt trả lời câu hỏi. Xin mời logout và đăng nhập lại để tiếp tục tạo hoặc trả lời câu hỏi nhé!"  #CƠ CHẾ TĂNG ĐIỂM CHO CÂY VÀO ĐÂY!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!!!!!!!!!!!!!!!!!!
                     else:
-                        return "Chúc bạn may mắn lần sau"
+                        return "Chúc bạn may mắn lần sau. Bạn đã hết lượt trả lời câu hỏi. Xin mời logout và đăng nhập lại để tiếp tục tạo hoặc trả lời câu hỏi nhé! "
+            else:
+                return redirect(url_for('show_question_again')) #đưa về trang show_question_again để gen lại câu hỏi khác
         else:
             return redirect(url_for('input_member')) #đưa người dùng quay lại đăng nhập username
     else:
         return redirect(url_for('join')) #đưa người dùng quay lại đăng nhập vào cây
 
+@app.route('/show_question_again')
+def show_question_again():
+    return render_template('show_question_again.html')
 
 
 @app.route('/logout')
 def logout():
     session['loggedin_tree'] = False
     return redirect(url_for('join')) #đưa người dùng quay lại đăng nhập vào cây
+
+@app.route('/my_tree')
+def my_tree():
+    if session.get('loggedin_tree', False): #kiểm tra xem người dùng đã đăng nhập vào cây chưa?
+        if session.get('loggedin_user', False): #kiểm tra xem người dùng đã đăng nhập vào username chưa?
+            name_tree = session['name_tree'] #lấy lại thông tin Cây của nhóm
+            username = session['username'] #Lấy lại thông tin của user
+        else:
+            return redirect(url_for('input_member')) #đưa người dùng quay lại đăng nhập username
+    else:
+        return redirect(url_for('join')) #đưa người dùng quay lại đăng nhập vào cây
+
 
 if __name__ == '__main__':
   app.run(debug=True)
