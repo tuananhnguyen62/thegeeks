@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>
+      {% block title %}
+      {% endblock %}
+    </title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/dfc9ca6b14.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Risque" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark">
+      <a href="#" class="font-logo m-l-50p">Treeks</a>
+      <div class="m-r-40p">
+          <a href="#" class="btn btn-warning m-r-20p f-ris">My Hobbies</a>
+      </div>
+      <div class="float-right mr-4">
+        <a href="#" class=" text-white f-s-14">Join Group |</a>
+        <a href="#" class="text-white f-s-14">Create Group</a>
+      </div>
+    </nav>
+
+    <nav class="navbar navbar-expand-lg navbar-light m-l-40p mb-3 b-img">
+      <img src="http://via.placeholder.com/250x75" alt="">
+      <div class="">
+        <form class="form-inline my-2 my-lg-0 ">
+        <input class="form-control mr-sm-2 m-l-400p" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+      </div>
+    </nav>
+
+    {% block page_content %}
+    {% endblock %}
+
+    <footer class="navbar bg-dark navbar-dark m-t-150p">
+      <div class="">
+        <a href="#" class="f-s-20p text-white m-l-300p">About me</a>
+        <a href="#"class="f-s-20p text-white m-l-f">My website</a>
+        <a href="#"class="f-s-20p text-white m-l-f">Contact</a>
+      </div>
+    </footer>
+  </body>
+</html>
