@@ -30,6 +30,7 @@ class Tree(Document):
     name_tree = StringField()
     password = StringField()
     point = IntField()
+    limit = IntField()
 
 @app.route('/')
 def index():
@@ -54,12 +55,14 @@ def create_tree():
         form = request.form
         name_tree = form['name_tree']
         password = form['password']
+        limit = form['limit']
         check_tree = Tree.objects(name_tree = name_tree).first()
         if check_tree is None:
-            new_tree = Tree(name_tree=name_tree, password=password, point =0)
+            new_tree = Tree(name_tree=name_tree, password=password, point =0, limit = limit)
             new_tree.save()
             session['created_tree'] = True #lưu session tạo tên cây khi khởi tạo
             session['created_name_tree'] = name_tree #lưu thông tin của tên cây khi khởi tạo
+            session['limit'] = limit #Lưu sô lượng thành viên
             return redirect(url_for('create_tree_2'))
         else:
             return "Tên cây đã được sử dụng"
@@ -68,17 +71,23 @@ def create_tree():
 def create_tree_2():
     if session.get('created_tree', False): #kiểm tra xem đã tọa tên cây trước chưa?
         name_tree = session['created_name_tree']
+        user_on_db = User.objects(name_tree = name_tree) #lấy list các user với điều kiện là name tree phải trùng
+        limit = session['limit'] # lấy limit đã lưu ở trên
         if request.method == "GET" :
             return render_template('create_tree_2.html')
-        elif request.method == "POST" :
-            form = request.form
-            username = form['username']
-            user_password = form['user_password']
-            new_user = User(name_tree=name_tree, username=username, user_password= user_password)
-            new_user.save()
-            return render_template('create_tree_2.html', name_tree = name_tree)
+        elif request.method == "POST":
+            if len(user_on_db) < int(limit): # khi mà user tương ứng vs name tree trên database nhỏ hơn limit thì chạy
+                form = request.form
+                username = form['username']
+                user_password = form['user_password']
+                new_user = User(name_tree=name_tree, username=username, user_password= user_password)
+                new_user.save()
+                return render_template('create_tree_2.html', name_tree = name_tree)
+            else:
+                return "Đã Đến Giới Hạn Thêm Thành Viên"
     else:
         return redirect(url_for('create_tree')) #đưa người dùng về tạo tên cây
+
 
 @app.route('/join', methods = ['GET', 'POST'])
 def join():
@@ -109,6 +118,7 @@ def input_member():
             username = form['username']
             user_password = form['user_password']
             user = User.objects(username = username).first()
+            print(user)
             if user is None:
                 return "username không tồn tại"
             elif user.user_password != user_password:
@@ -119,6 +129,16 @@ def input_member():
                 return "Đăng nhập thành công" #cần return đến trang chủ
     else:
         return redirect(url_for('join')) #đưa người dùng quay lại đăng nhập vào cây
+@app.route('/show_member')
+def show_member():
+    if session.get('loggedin_tree', False):
+        if  session.get('loggedin_user', False):
+            name_tree = session['name_tree']
+            users = User.objects(name_tree = name_tree)
+            return render_template('show_member.html', users = users, name_tree = name_tree)
+
+    else:
+        return redirect(url_for('join'))
 
 @app.route('/create_question',methods = ['GET', 'POST'])
 def create_question():
@@ -154,20 +174,22 @@ def show_question():
         if session.get('loggedin_user', False): #kiểm tra xem người dùng đã đăng nhập vào username chưa?
             name_tree = session['name_tree'] #lấy lại thông tin Cây của nhóm
             username = session['username'] #Lấy lại thông tin của user
-            # point_trees = Tree.objects(name_tree= name_tree).first() #Lấy điểm số của Cây từ database về
-            # point_tree = point_trees.point
-            # print(point_trees)
             question_show = Question.objects()
             question_show_random = choice(question_show)
+            points = Tree.objects(name_tree = name_tree).first() #lấy objects tương ứng vs name_tree
             if question_show_random.username != username: #đưa ra điều kiện để username của câu hỏi khác với username hiện tại của người dùng thì mới hiện ra
                 if request.method == 'GET':
                     return render_template('show_question.html',username= username ,name_tree= name_tree, answer_shows = question_show_random)
                 elif request.method == 'POST':
                     form = request.form
                     right_answer = form['right_answer']
-                    if right_answer == question_show_random.right_answer:
+                    if right_answer == question_show_random.right_answer: # đúng thì cộng 1
+                        points_tree_update = points.point + 1 # lấy điểm trên database + 1 gán vào biến
+                        points.update( point = str(points_tree_update)) # convert sang string rồi update
                         return "Đúng, cộng 1 điểm. Bạn đã hết lượt trả lời câu hỏi. Xin mời logout và đăng nhập lại để tiếp tục tạo hoặc trả lời câu hỏi nhé!"  #CƠ CHẾ TĂNG ĐIỂM CHO CÂY VÀO ĐÂY!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<!!!!!!!!!!!!!!!!!!
-                    else:
+                    else: # sai trừ 1
+                        points_tree_update = points.point - 1
+                        points.update( point = str(points_tree_update))
                         return "Chúc bạn may mắn lần sau. Bạn đã hết lượt trả lời câu hỏi. Xin mời logout và đăng nhập lại để tiếp tục tạo hoặc trả lời câu hỏi nhé! "
             else:
                 return redirect(url_for('show_question_again')) #đưa về trang show_question_again để gen lại câu hỏi khác
