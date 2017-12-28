@@ -6,12 +6,19 @@ Trang chủ
 
 {% block page_content %}
 
-  <p>Đây là trang chủ</p>
-  <p>Bản hướng dẫn thử các chức năng:</p>
-  <p>1. Chức năng tạo nhóm mới hoặc tạo cây mới: /create_tree</p>
-  <p>2. Chức năng join vào nhóm/cây: /join</p>
-  <p>3. Chức năng tạo câu hỏi: /create_question </p>
-  <p>4. Chức năng trả lời câu hỏi: /show_question</p>
-  <p>5. Chức năng đăng xuất: /logout</p>
+  <div class="container">
+    <h2 class="b-t">Top Trees</h2>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card" style="width: 20rem;">
+          <img class="card-img-top " src="http://via.placeholder.com/320x180" alt="Card image cap">
+          <div class="card-body ">
+            <h4 class="card-title">Tên nhóm</h4>
+            <p class="card-text">Giới thiệu nhóm</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
