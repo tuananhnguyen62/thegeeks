@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-
-{% block page_content %}
-<h1>Thành viên Trong Nhóm {{ name_tree }} là: </h1>
-  {% for user in users %}
-    <p>{{ user.username }}</p>
-  {% endfor %}
-
-{% endblock %}
