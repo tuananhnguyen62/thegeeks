@@ -30,9 +30,15 @@
       <div class="my-tree-picture">
         <!--Sau phải đặt if, dựa trên số điểm của cây mà hiển thị ảnh-->
         {% if items[0].point == 0 %}
-          <img src="static\image\8-ways-to-prepare-for-a-future-adoption.jpg" alt="">
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 25%; height: 30px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <img class="rounded-circle" src="static\image\8-ways-to-prepare-for-a-future-adoption.jpg" alt="">
         {% elif items[0].point < 17 %}
-          <img src="static\image\mam.jpg" alt="">
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 25%; height: 30px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <img class="rounded-circle" src="static\image\mam.jpg" alt="">
         {% else %}
           <img src="http://iahealth.net/wp-content/uploads/2013/07/big-tree-90909.jpg" alt="">
         {% endif %}
