@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 
 {% block page_content %}
+    <h3 class="text-danger">Xin chào {{username}} , thành viên của nhóm cây {{name_tree}}</h3>
     <h3 class="text-primary" > Câu hỏi mới</h3>
-    {% for question_content in question_contents  %}
     <label>{{ question_content }}</label>
-    {% endfor %}
     <form class="container" method="post">
-      <input type="text" name="username" class="form-control" value="" placeholder="Your username"> <br>
+      <!-- tạo thêm 1 input để lưu câu hỏi random, rồi dùng css để ẩn input -->
+      <input type="text" name="content" value="{{ question_content }}" style="display:none;">
       <input type="text" name="answer1" class="form-control" value="" placeholder="Câu trả lời 1"> <br>
       <input type="text" name="answer2" class="form-control" value="" placeholder="Câu trả lời 2"> <br>
       <input type="text" name="answer3" class="form-control" value="" placeholder="Câu trả lời 3"> <br>
       <input type="text" name="answer4" class="form-control" value="" placeholder="Câu trả lời 4"> <br>
-      <input type="text" name="right_answer" class="form-control" value="" placeholder="Đáp án"> <br>
+      <input type="text" name="right_answer" class="form-control" value="" placeholder="Đáp án (chọn số từ 1 - 4)"> <br>
       <input type="submit" value="Thêm câu hỏi">
     </form>
 
