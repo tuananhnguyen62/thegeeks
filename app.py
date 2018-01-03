@@ -192,6 +192,9 @@ def my_tree():
         if session.get('loggedin_user', False): #kiểm tra xem người dùng đã đăng nhập vào username chưa?
             name_tree = session['name_tree'] #lấy lại thông tin Cây của nhóm
             username = session['username'] #Lấy lại thông tin của user
+            tree= Tree.objects(name_tree = name_tree).first()
+            users= User.objects(name_tree = name_tree)
+            return render_template('my_tree0.html', tree=tree, users = users)
         else:
             return redirect(url_for('input_member')) #đưa người dùng quay lại đăng nhập username
     else:
