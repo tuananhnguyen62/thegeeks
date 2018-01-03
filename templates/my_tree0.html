@@ -5,6 +5,7 @@
     <title>Treeks</title>
     <script type="text/javascript" scr="static\js\bootstrap.min.js">
     </script>
+    <script src="https://use.fontawesome.com/dfc9ca6b14.js"></script>
     <script type="text/javascript" scr="static\js\jquery-3.2.1.min.js">
     </script>
     <script type="text/javascript" scr="static\js\popper.js">
@@ -31,17 +32,28 @@
         <!--Sau phải đặt if, dựa trên số điểm của cây mà hiển thị ảnh-->
         {% if tree.point == 0 %}
           <div class="progress">
-            <div class="progress-bar bg-danger" role="progressbar" style="width: 41%" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
           <img class="rounded-circle bg-success" src="static\image\8-ways-to-prepare-for-a-future-adoption.jpg" alt="">
-        {% elif tree.point < 17 %}
+        {% elif tree.point < 10 %}
           <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width: 41%" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar bg-info" role="progressbar" style="width: 10%" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
           <img class="rounded-circle" src="static\image\mam.jpg" alt="">
+        {% elif tree.point < 40 %}
+          <div class="progress">
+            <div class="progress-bar bg-primary" role="progressbar" style="width: 40%" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <img class="rounded-circle" src="https://www.vishopper.com/images/products/maxxmax/PL/1255_cut-out-small-tree.jpg" alt="">
+        {% elif tree.point < 90 %}
+          <div class="progress">
+            <div class="progress-bar bg-success" role="progressbar" style="width: 70%" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <img class="rounded-circle" src="http://wx4sp1ml4bl80wd51ln2385o.wpengine.netdna-cdn.com/wp-content/uploads/2016/04/Tree-13.jpg" alt="">
         {% else %}
           <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width: 41%" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
+            <p class="Lobster text-danger">Cây của các bạn đã trở thành đại thụ! Xin chúc mừng!</p>
+            <div class="progress-bar bg-danger" role="progressbar" style="width: 100%" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
           <img src="http://iahealth.net/wp-content/uploads/2013/07/big-tree-90909.jpg" alt="">
         {% endif %}
@@ -93,6 +105,7 @@
           <button class="btn btn-primary" type="button" name="button">Make new question</button> -->
           <a class="btn btn-primary" href="#" role="button">Make new question</a>
           <a class="btn btn-success" href="#" role="button">Answer question</a>
+          <i class="fa fa-lightbulb-o icon-large" aria-hidden="true"></i><small class="Lobster">*Hint: hãy nuôi lớn cây của bạn bằng cách trả lời đúng các câu hỏi</small>
           <!-- <p>*Hint: hãy nuôi lớn cây của bạn bằng cách trả lời đúng các câu hỏi</p> -->
         </div>
       </div>
