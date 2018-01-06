@@ -7,12 +7,13 @@
     <form class="container" method="post">
       <!-- tạo thêm 1 input để lưu câu hỏi random, rồi dùng css để ẩn input -->
       <input type="text" name="content" value="{{ question_content }}" style="display:none;">
-      <input type="text" name="answer1" class="form-control" value="" placeholder="Câu trả lời 1"> <br>
-      <input type="text" name="answer2" class="form-control" value="" placeholder="Câu trả lời 2"> <br>
-      <input type="text" name="answer3" class="form-control" value="" placeholder="Câu trả lời 3"> <br>
-      <input type="text" name="answer4" class="form-control" value="" placeholder="Câu trả lời 4"> <br>
-      <input type="text" name="right_answer" class="form-control" value="" placeholder="Đáp án (chọn số từ 1 - 4)"> <br>
-      <input type="submit" value="Thêm câu hỏi">
+      <input type="text" name="answer1" class="form-control bg-white" value="" placeholder="Câu trả lời 1"> <br>
+      <input type="text" name="answer2" class="form-control bg-white" value="" placeholder="Câu trả lời 2"> <br>
+      <input type="text" name="answer3" class="form-control bg-white" value="" placeholder="Câu trả lời 3"> <br>
+      <input type="text" name="answer4" class="form-control bg-white" value="" placeholder="Câu trả lời 4"> <br>
+      <input type="text" name="right_answer" class="form-control bg-white text-primary" value="" placeholder="Đáp án (chọn số từ 1 - 4)"> <br>
+           <button type="submit" class="btn btn-primary" value="Thêm câu hỏi">Thêm câu hỏi</button>
+     
     </form>
 
 {% endblock %}
